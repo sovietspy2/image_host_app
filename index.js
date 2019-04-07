@@ -1,37 +1,44 @@
 const express = require("express");
-const path = require("path");
 const fs = require("fs");
 const app = express();
+const basicAuth = require("express-basic-auth");
 require('dotenv').config()
-
-console.log(process.env.API_KEY);
 
 let files = [];
 
 function reindex() {
     files = [];
-    fs.readdirSync(__dirname+"/static").forEach(file=> {
+    let count = 0;
+    fs.readdirSync(__dirname+"/static").forEach( (file)=> {
         files.push(file);
+        count++;
     });
-    console.log("File reindexing finished");
+    console.log("File reindexing finished. Processed files: ",count);
 }
 
 reindex();
 
+if (!process.env.password) {
+    console.error("No authentication set. Killing process . . . ")
+    process.exit(1);
+}
+
+// AUTH
+
+app.use(basicAuth({ 
+    users: {
+       user: process.env.password
+    }
+}));
+
 // API
 
-app.use(function (req, res, next) {
-    console.log('Time:', Date.now());
-    //console.log(req);
-    next();
-  });
-
-app.use("/reindex", (req,res,next)=> {
+app.get("/reindex", (req,res,next)=> {
     reindex();
     res.sendStatus(200);
 });
 
-app.use("/getPicture", (req,res,next)=> {
+app.get("/getPicture", (req,res,next)=> {
     var options = {
         root: __dirname + '/static/',
         dotfiles: 'deny',
@@ -44,8 +51,8 @@ app.use("/getPicture", (req,res,next)=> {
     const randomFileName = files[Math.floor(Math.random()*files.length)];
     
     res.sendFile(__dirname+"/static/"+randomFileName);
+    console.log("Sent file: ",randomFileName)
 });
 
-//app.use(express.static('static'))
-
 app.listen("6969");
+console.log("api started");
