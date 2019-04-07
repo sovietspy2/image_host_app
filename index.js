@@ -6,7 +6,7 @@ require('dotenv').config()
 
 let files = [];
 
-function reindex() {
+function reIndex() {
     files = [];
     let count = 0;
     fs.readdirSync(__dirname+"/static").forEach( (file)=> {
@@ -16,7 +16,7 @@ function reindex() {
     console.log("File reindexing finished. Processed files: ",count);
 }
 
-reindex();
+reIndex();
 
 if (!process.env.password) {
     console.error("No authentication set. Killing process . . . ")
@@ -27,13 +27,13 @@ if (!process.env.password) {
 
 app.use(basicAuth({ 
     users: {
-       user: process.env.password
+       [process.env.user]: process.env.password
     }
 }));
 
 // API
 
-app.get("/reindex", (req,res,next)=> {
+app.get("/reIndex", (req,res,next)=> {
     reindex();
     res.sendStatus(200);
 });
