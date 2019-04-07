@@ -3,6 +3,7 @@ const fs = require("fs");
 const app = express();
 const basicAuth = require("express-basic-auth");
 require('dotenv').config()
+const fileUpload = require('express-fileupload');
 
 let files = [];
 
@@ -26,6 +27,7 @@ if (!process.env.password) {
 // AUTH
 
 app.use(basicAuth({ 
+    challenge: true,
     users: {
        [process.env.user]: process.env.password
     }
@@ -33,8 +35,30 @@ app.use(basicAuth({
 
 // API
 
+app.use(fileUpload());
+
+app.post('/upload', function(req, res) {
+  if (Object.keys(req.files).length == 0) {
+    return res.status(400).send('No files were uploaded.');
+  }
+
+  let file = req.files.file;
+
+  file.mv(__dirname+'/static/'+file.name, function(err) {
+    if (err)
+      return res.status(500).send(err);
+
+      res.sendFile(__dirname+"/upload.html");
+      reIndex();
+  });
+});
+
+app.get("/upload", (req, res)=>{
+    res.sendFile(__dirname+"/upload.html");
+});
+
 app.get("/reIndex", (req,res,next)=> {
-    reindex();
+    reIndex();
     res.sendStatus(200);
 });
 

@@ -1,0 +1,31 @@
+<html>
+<style>
+    body {
+        display: flex;
+        background-color: chocolate;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .upload_form {
+        background-color: whitesmoke;
+        border: 1px solid black;
+        border-radius: 3px;
+        height: 200px;
+
+    }
+</style>
+
+<body>
+    <div class="upload_form">
+        <h1>Upload files here</h1>
+        <form ref='uploadForm' id='uploadForm' action='http://localhost:6969/upload' method='post'
+            encType="multipart/form-data">
+            <div><input type="file" name="file" /></div>
+            <div></div><input type='submit' value='Upload!' />
+    </div>
+    </div>
+    </form>
+</body>
+
+</html>
