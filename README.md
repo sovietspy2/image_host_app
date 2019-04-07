@@ -1,1 +1,8 @@
-its a nodejs app that servers pictures on an authorized api
+This app shares a random image from a folder.
+
+It has 2 REST endpoints:
+/getPicture 
+/reIndex
+
+The api uses basic auth. 
+user : yourcustompassword
